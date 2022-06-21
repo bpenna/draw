@@ -1,0 +1,47 @@
+body {
+  overflow: hidden; 
+}
+
+#image1 {
+  position: absolute;
+  width: 100%;
+  left: 0px;
+}
+
+#texto {
+  position: absolute;
+  padding: 7.5% 0 0 7.5%;
+  color: white;
+}
+
+#image2 {
+  position: absolute;
+  width: 100%;
+  margin-top: 16vw;
+  left: 0px;
+}
+
+#image3 {
+  position: absolute;
+  width: 100%;
+  margin-top: 19vw;
+  left: 0px;
+}
+
+#players {
+  position: absolute;
+  border: 1px solid red;
+  height: 95vw;
+  width: 30%;
+  margin-top: 20vw;
+}
+
+#screen {
+  position: absolute;
+  border: 1px solid red;
+  cursor: crosshair;
+  height: 95vw;
+  width: 65%;
+  margin-top: 20vw;
+  margin-left: 31%;
+}
