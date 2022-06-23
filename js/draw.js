@@ -1,26 +1,41 @@
 var debugMode = false;
 
-var nomes = ["0123456789", "0123456789", "0123456789", "0123456789", "0123456789", "0123456789", "0123456789", "0123456789", "0123456789", "0123456789"]; 
+var nomes = ["012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678"]; 
 
-var infoText = "";
-    
-for (var i = 0; i < nomes.length; i++) {
-  if (i == 0) {
-    infoText += "<ol id = 'lista'> ";
+const cores = ["blue", "green", "red", "gold", "deeppink", "deepskyblue", "lightgreen", "chocolate", "wheat", "magenta"];
+
+var pontos = [9,8,7,6,5,4,3,2,1,0];
+
+function ordena(nome, ponto, cor) {
+  var vetor = [];
+  for (var i = 0; i < nome.length; i++) {
+    vetor[i] = {nome: nome[i], ponto: ponto[i], cor: cor[i]};
   }
-  infoText += "<li> " + nomes[i] + " </li> ";
-  if (i == nomes.length - 1) {
-    infoText += "</ol>";
-  }
+  vetor = vetor.sort(function (a, b) {return b.ponto - a.ponto});
+  return vetor;
 }
 
-document.getElementById('players').innerHTML = infoText; 
+function jogo() {
+  var jogadores = ordena(nomes, pontos, cores);
+  
+  var infoText = "";
+  for (var i = 0; i < nomes.length; i++) {
+    if (i == 0) {
+      infoText += "<ol id = 'lista'> ";
+    }
+    infoText += "<li style = 'color: " + jogadores[i].cor + ";'> " + jogadores[i].nome + " (" + pad2(jogadores[i].ponto) + ")"+ " </li> ";
+    if (i == nomes.length - 1) {
+      infoText += "</ol>";
+    }
+  }
+  document.getElementById('players').innerHTML = infoText; 
+}
 
 var tela = document.getElementById("screen");
 var contexto = tela.getContext("2d");
 contexto.lineWidth = 3;
 
-const cores = ["red", "blue", "green", "purple", "gray"];
+
 
 // Mostrando o tempo decorrido de jogo
 function temporizador(atual) {
@@ -71,7 +86,7 @@ const pincel = {
   posicaoAnterior: null
 }
 
-tela.addEventListener("mousedown", () => {iniciaMovimentoMouse()}); 
+tela.addEventListener("mousedown", (evento) => {evento.preventDefault(); iniciaMovimentoMouse()}); 
 tela.addEventListener("mousemove", (evento) => {continuaMovimentoMouse(evento)});
 tela.addEventListener("mouseup", () => {finalizaMovimentoMouse()});
 
@@ -92,7 +107,7 @@ function iniciaMovimentoMouse() {
     console.log(document.getElementById("game").offsetHeight); 
   }
   
-  contador(6);
+//  contador(6);
 }
 
 function iniciaMovimentoTouch(evento) {  
@@ -150,6 +165,7 @@ const desenho = () => {
     pincel.posicaoAnterior = {x: pincel.posicao.x, y: pincel.posicao.y};
   }
   window.requestAnimationFrame(desenho);
+  //setTimeout(desenho, 10);
 }
 
 function atualDataHora() {
@@ -189,7 +205,7 @@ function tempo() {
 
 ///////////////////////////////////////////////////////////////////
 desenho();
-
+jogo();
 
 
 
