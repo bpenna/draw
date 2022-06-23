@@ -41,20 +41,20 @@ body {
   position: absolute;
   border: 1px solid green;
   height: 78vh;
-  width: 28%;
+  width: 35%;
   margin-top: 20vw;
 }
 
 #game {
   position: absolute;
   height: 78vh;
-  width: 67%;
+  width: 62%;
   margin-top: 20vw;
-  margin-left: 30%;
+  margin-left: 35%;
 }
 
 #screen {
-  border: 1px solid whitesmoke;
+  border-left: 1px dotted whitesmoke;
   cursor: crosshair;
   width: 100%;
   height: 100%;
