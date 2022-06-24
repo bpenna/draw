@@ -50,7 +50,7 @@ function iniciaTurno(palavra) {
   if (pincel.ativo) {
     pincel.ativo = false;
   }
-  document.getElementById('texto').innerHTML = "Desenhe " + palavra + ", " + jogador + "!";
+  document.getElementById('texto').innerHTML = "Oi, desenhe " + palavra + ", " + jogador + "!";
   var infoText = "<img id = 'image2' src='https://i.imgur.com/QIkPEnO.png'>";
   var num = 2.5;
   const myInterval = setInterval(function() {
@@ -151,7 +151,12 @@ function iniciaMovimentoTouch(evento) {
   const newX = (evento.changedTouches[0].pageX - rect.left) * tela.width / rect.width;
   const newY = (evento.changedTouches[0].pageY - rect.top) * tela.height / rect.height; 
   pincel.posicaoAnterior = {x: newX, y: newY};
-  iniciaMovimentoMouse();
+  //iniciaMovimentoMouse();
+  pincel.ativo = true;
+  //pincel.indiceCor = pincel.indiceCor == cores.length - 1 ? 0 : pincel.indiceCor + 1;
+  pincel.indiceCor = indice;
+  
+  contexto.strokeStyle = cores[pincel.indiceCor];
 }
 
 function continuaMovimentoMouse(evento) {
