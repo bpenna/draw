@@ -26,8 +26,14 @@ button {
 #image2 {
   position: absolute;
   width: 100%;
-  margin-top: 16vw;
+  margin-top: 15.85vw;
   left: 0px;
+}
+
+#left, #right {
+  position: absolute;
+  height: 1.75vw;
+  margin-top: 16.4vw;
 }
 
 #image3 {
