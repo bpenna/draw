@@ -11,16 +11,29 @@
 
       <div id = "playerInfo">
         <img id = "image1" src="https://i.imgur.com/FmkOjg9.png">
-        <label style="font-size:5vw;" id = "texto">TESTE</label>
-        <button id = "botao" onclick = "iniciar()">ok</button>
-        <img id = "image2" src="https://i.imgur.com/QIkPEnO.png">
-        <img id = "image3" src="https://i.imgur.com/xQdMxBr.png">
+        <label style="font-size:5vw;" id = "texto"></label>
+        <button id = "botao" onclick = "iniciarJogo()">ok</button>
+        <div id = "barra">
+          <img id = "image2" src="https://i.imgur.com/QIkPEnO.png">
+          <!--
+          <img id = "left" src="https://i.imgur.com/3ilVR3y.png" style = "left: 2.5vw;">
+          <img id = "left" src="https://i.imgur.com/3ilVR3y.png" style = "left: 3.0vw;">
+          <img id = "left" src="https://i.imgur.com/3ilVR3y.png" style = "left: 92.0vw;">
+          <img id = "right" src="https://i.imgur.com/sg5bb38.png" style = "right: 2.5vw;">
+          -->
+        </div>
+          <img id = "image3" src="https://i.imgur.com/xQdMxBr.png">
         <div id = "players"></div>
         <div id = "game">
           <canvas id = "screen"></canvas>
         </div>
       </div>
-
-      <script type="text/javascript" src="./js/draw.js"></script>
+      
+      <!--
+clock: https://i.imgur.com/4LAM5CB.png
+left:  https://i.imgur.com/3ilVR3y.png
+right: https://i.imgur.com/sg5bb38.png
+-->
+    <script type="text/javascript" src="./js/draw.js"></script>
     </body>
 </html>
