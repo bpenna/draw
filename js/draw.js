@@ -1,6 +1,9 @@
 var debugMode = false;
 
-var nomes = ["012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678", "012345678"]; 
+var jogadores = null;
+var indice = -1;
+var turno2 = false;
+var nomes = ["Bernardo", "Carolina", "Eduardo", "Cristiane", "Henrique", "012345678", "12345678", "2345678", "345678", "45678"]; 
 
 const cores = ["blue", "green", "red", "gold", "deeppink", "deepskyblue", "lightgreen", "chocolate", "wheat", "magenta"];
 
@@ -16,26 +19,110 @@ function ordena(nome, ponto, cor) {
 }
 
 function jogo() {
-  var jogadores = ordena(nomes, pontos, cores);
+  jogadores = ordena(nomes, pontos, cores);
   
   var infoText = "";
   for (var i = 0; i < nomes.length; i++) {
     if (i == 0) {
       infoText += "<ol id = 'lista'> ";
     }
-    infoText += "<li style = 'color: " + jogadores[i].cor + ";'> " + jogadores[i].nome + " (" + pad2(jogadores[i].ponto) + ")"+ " </li> ";
+    infoText += "<li style = 'color: " + jogadores[i].cor + ";'> (" + pad2(jogadores[i].ponto) + ") " + jogadores[i].nome + " </li> ";
     if (i == nomes.length - 1) {
       infoText += "</ol>";
     }
   }
-  document.getElementById('players').innerHTML = infoText; 
+  document.getElementById('players').innerHTML = infoText;   
 }
 
 var tela = document.getElementById("screen");
 var contexto = tela.getContext("2d");
 contexto.lineWidth = 3;
 
+async function iniciar() {
+  contexto.clearRect(0, 0, tela.width, tela.height);
+  
+    indice = 0;
+    exibeNomeComTempo(101);
+    
+}
 
+function exibeNomeComTempo(atual) {
+  
+  var jogador = jogadores[indice].nome;
+  var primeiro = true;
+  if (pincel.ativo) {
+    pincel.ativo = false;
+  }
+  const myInterval = setInterval(function() {
+    if (pincel.ativo) {
+      primeiro = false;
+    } /*else {
+      if (!primeiro) {
+        
+      }
+    }*/
+    
+    //console.log(jogador + " " + pincel.ativo + " " + primeiro + " " + atual);
+    
+    if (atual > 0 && (primeiro || pincel.ativo)) { 
+      atual--;
+      var minJogo = (atual - (atual % 60)) / 60;
+      var segJogo = (atual < 60) ? atual : atual - (minJogo * 60);
+      document.getElementById('texto').innerHTML = jogador + ": " + pad2(minJogo) + ":" + pad2(segJogo);   
+    }	else {
+      clearInterval(myInterval);
+      indice++;
+      if (indice < jogadores.length) {
+        exibeNomeComTempo(101);
+      } else {
+        if (!turno2) {
+          turno2 = true;
+          indice = 0;
+          exibeNomeComTempo(101);
+        } else {
+          turno2 = false;
+          indice = -1;
+          jogadores = null;
+          pincel.ativo = false;
+          pincel.indiceCor = -1;
+          contexto.strokeStyle = "black";
+          tela.removeEventListener("mousedown", iniciaMovimentoMouse); 
+          tela.removeEventListener("touchstart", iniciaMovimentoTouch);
+        }
+      }
+    }
+  }, 100);
+}
+
+
+
+
+
+
+
+
+
+// Mostrando o tempo restante
+async function exibeNomeComTempoOLD(jogador, atual) {
+  
+  var primeiro = true;
+  const myInterval = setInterval(function() {
+    if (pincel.ativo) {
+      primeiro = false;
+    } 
+    
+    //console.log(jogador + " " + pincel.ativo + " " + primeiro + " " + atual);
+    
+    if (atual > 0 && (primeiro || pincel.ativo)) { 
+      atual--;
+      minJogo = (atual - (atual % 60)) / 60;
+      segJogo = (atual < 60) ? atual : atual - (minJogo * 60);
+      document.getElementById('texto').innerHTML = jogador + ": " + pad2(minJogo) + ":" + pad2(segJogo);   
+    }	else {
+      clearInterval(myInterval);
+    }
+  }, 1000);
+}
 
 // Mostrando o tempo decorrido de jogo
 function temporizador(atual) {
@@ -80,24 +167,29 @@ const desenharTela = (ponto) => {
 const pincel = {
   ativo: false,
   movendo: false,
-  indiceCor: 0,
+  indiceCor: -1,
   posicao: {x: 0, y: 0},
   posicao: null,
   posicaoAnterior: null
 }
 
-tela.addEventListener("mousedown", (evento) => {evento.preventDefault(); iniciaMovimentoMouse()}); 
+//tela.addEventListener("mousedown", (evento) => {evento.preventDefault(); iniciaMovimentoMouse()}); 
+tela.addEventListener("mousedown", iniciaMovimentoMouse); 
 tela.addEventListener("mousemove", (evento) => {continuaMovimentoMouse(evento)});
 tela.addEventListener("mouseup", () => {finalizaMovimentoMouse()});
 
-tela.addEventListener("touchstart", (evento) => {evento.preventDefault(); iniciaMovimentoTouch(evento)}); 
+//tela.addEventListener("touchstart", (evento) => {evento.preventDefault(); iniciaMovimentoTouch(evento)}); 
+tela.addEventListener("touchstart", iniciaMovimentoTouch); 
 tela.addEventListener("touchmove", (evento) => {evento.preventDefault(); continuaMovimentoTouch(evento)});
 tela.addEventListener("touchend", () => {finalizaMovimentoTouch()});
 
-function iniciaMovimentoMouse() {
+function iniciaMovimentoMouse(e) {
+  e.preventDefault();
   if (debugMode) {console.log("INÍCIO DO TURNO")};
   pincel.ativo = true;
-  pincel.indiceCor = pincel.indiceCor == cores.length - 1 ? 0 : pincel.indiceCor + 1;
+  //pincel.indiceCor = pincel.indiceCor == cores.length - 1 ? 0 : pincel.indiceCor + 1;
+  pincel.indiceCor = indice;
+  
   contexto.strokeStyle = cores[pincel.indiceCor];
   
   if (debugMode) {
@@ -106,11 +198,11 @@ function iniciaMovimentoMouse() {
     console.log(document.getElementById("game").offsetWidth);  
     console.log(document.getElementById("game").offsetHeight); 
   }
-  
-//  contador(6);
+
 }
 
-function iniciaMovimentoTouch(evento) {  
+function iniciaMovimentoTouch(evento) { 
+  evento.preventDefault();
   if (debugMode) {console.log("<MOBILE>")};
   const rect = tela.getBoundingClientRect();
   const newX = (evento.changedTouches[0].pageX - rect.left) * tela.width / rect.width;
@@ -148,7 +240,7 @@ function finalizaMovimentoMouse() {
   if (debugMode) {console.log("FIM DO TURNO")};
   pincel.ativo = false;
   pincel.posicao = null;
-  document.getElementById('texto').innerHTML = "acabou";
+  //document.getElementById('texto').innerHTML = "acabou";
 }
 
 function finalizaMovimentoTouch() {
@@ -214,3 +306,5 @@ jogo();
 
 
 ///////////////////////////////////////////////////////////////////
+
+
