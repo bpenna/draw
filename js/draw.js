@@ -46,7 +46,7 @@ function iniciaTurno(palavra) {
   
   var jogador = jogadores[indice].nome;
   var primeiro = true;
-  var tempo = 122;
+  var tempo = 130;
   if (pincel.ativo) {
     pincel.ativo = false;
   }
@@ -59,7 +59,7 @@ function iniciaTurno(palavra) {
     }
     tempo--;
     if (tempo > 0 && (primeiro || pincel.ativo)) { 
-        if (num < 92) {
+        if (num < 94) {
           infoText += "<img id = 'left' src = 'https://i.imgur.com/3ilVR3y.png' style = 'left: " + num + "vw;'>";
         } else {
           infoText += "<img id = 'right' src='https://i.imgur.com/sg5bb38.png' style = 'right: 2.5vw;'>";
