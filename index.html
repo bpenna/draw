@@ -1,39 +1,40 @@
 <html>
     <head>
-
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-      
       <link rel="stylesheet" type="text/css" href="./css/draw.css">
       <title>Bpenna's draw game</title>
     </head>
+  
     <body>
-
       <div id = "playerInfo">
+        <img id = "clock" src = "https://i.imgur.com/4LAM5CB.png">      
         <img id = "image1" src="https://i.imgur.com/FmkOjg9.png">
-        <label style="font-size:5vw;" id = "texto"></label>
-        <button id = "botao" onclick = "iniciarJogo()">ok</button>
-        <div id = "barra">
-          <img id = "image2" src="https://i.imgur.com/QIkPEnO.png">
-          <!--
-          <img id = "left" src="https://i.imgur.com/3ilVR3y.png" style = "left: 2.5vw;">
-          <img id = "left" src="https://i.imgur.com/3ilVR3y.png" style = "left: 3.0vw;">
-          <img id = "left" src="https://i.imgur.com/3ilVR3y.png" style = "left: 92.0vw;">
-          <img id = "right" src="https://i.imgur.com/sg5bb38.png" style = "right: 2.5vw;">
-          -->
-        </div>
-          <img id = "image3" src="https://i.imgur.com/xQdMxBr.png">
-        <div id = "players"></div>
-        <div id = "game">
-          <canvas id = "screen"></canvas>
-        </div>
+        
+        <img id = "cor" src = "https://i.imgur.com/BTEDJCK.png">
+        <div id = "minhaCor" = class = "circulo"></div>       
+        
+        <label style="font-size:5vw;" id = "texto1"></label>   
+        <label style="font-size:5vw;" id = "texto2"></label> 
+        
+        <img id = "record" class = "btn1" style = "left: 8%" src="https://i.imgur.com/Lfk8skQ.png" disabled = "true" onclick = "console.log('RECORD')">
+        <img id = "config" class = "btn1" style = "left: 16%" src="https://i.imgur.com/PLpVoAS.png" onclick = "iniciarJogo()">
+        <img id = "about" class = "btn1" style = "left: 24%" src="https://i.imgur.com/11fXTGi.png" onclick = "console.log('SOBRE')">
+        
+        <img id = "play" class = "btn2_OFF" style = "left: 8%" src="https://i.imgur.com/TKuFGfA.png" onclick = "iniciarJogo()">
+        <img id = "set" class = "btn2_ON" style = "left: 16%" src="https://i.imgur.com/1dxvOlG.png" onclick = "configurarJogo()">
+        <img id = "stop" class = "btn2_OFF" style = "left: 24%" src="https://i.imgur.com/MelBDA4.png" onclick = "console.log('STOP')">
+        
+      </div>  
+      <div id = "barra">
+        <img id = "image2" src="https://i.imgur.com/QIkPEnO.png">
       </div>
-      
-      <!--
-clock: https://i.imgur.com/4LAM5CB.png
-left:  https://i.imgur.com/3ilVR3y.png
-right: https://i.imgur.com/sg5bb38.png
--->
-    <script type="text/javascript" src="./js/draw.js"></script>
+      <img id = "image3" src="https://i.imgur.com/xQdMxBr.png">
+      <div id = "players"></div>
+      <div id = "game">
+        <canvas id = "screen"></canvas>
+      </div>
+      <div id = "window"></div>
+      <script type="text/javascript" src="./js/draw.js"></script>
     </body>
 </html>
