@@ -3,24 +3,73 @@ body {
   background-color: black;
 }
 
+#clock {
+  position: absolute;
+  left: 90%;
+  z-index: 2;
+}
+
+#cor {
+  position: absolute;
+  width: 5vw;
+  height: 5vw;
+  margin-top: 6.5%;
+  left: 2vw;
+  z-index: 2;
+}
+
+.circulo {
+  background: transparent;
+  position: absolute;
+  width: 3.6vw;
+  height: 3.6vW;
+  border-radius: 50%;
+  margin-top: 7.2%;
+  left: 2.7vw;
+  z-index: 3;
+}
+
 #image1 {
   position: absolute;
   width: 100%;
   left: 0px;
 }
 
-#texto {
+#texto1 {
   position: absolute;
-  padding: 7.5% 0 0 7.5%;
+  padding: 2.5% 0 0 30%;
   color: white;
 }
 
-button {
+#texto2 {
   position: absolute;
-  width: 5vw;
-  height: 5vw;
-  margin-top: 7%;
-  margin-left: 2%;
+  padding: 9% 0 0 30%;
+  color: white;
+}
+
+.btn1 {
+  position: absolute;
+  cursor: pointer;
+  width: 6vw;
+  height: 6vw;
+  margin-top: 2%;
+}
+
+.btn2_ON {
+  position: absolute;
+  cursor: pointer;
+  width: 6vw;
+  height: 6vw;
+  margin-top: 8.5%;
+}
+
+.btn2_OFF {
+  position: absolute;
+  cursor: default;
+  width: 6vw;
+  height: 6vw;
+  margin-top: 8.5%;
+  opacity: 0.3;
 }
 
 #image2 {
@@ -42,6 +91,66 @@ button {
   height: 86vh;
   margin-top: 19vw;
   left: 0px;
+}
+
+#janela {
+  position: absolute;
+  width: 50%;
+  margin-top: 30vw;
+  left: 25%;
+  z-index: 2;
+}
+
+.info {
+  position: absolute;
+  color: white;
+  font-size: 2.5vw;
+  padding-left: 27vw;
+  margin-top: 35vw;
+  z-index: 3;
+}
+
+.ok:enabled{
+  position: absolute;
+  margin-top: 34vw;
+  z-index: 3;
+  background-color: CornflowerBlue;
+  border-color: #272262;
+  color: #272262;
+  padding: 7px;
+  font-weight: bold;
+  font-size: 2vw;
+  cursor: pointer;
+  outline: none;
+  border-radius: 20px;
+  border-width: 10px;
+}
+
+.ok:disabled{
+  osition: absolute;
+  margin-top: 34vw;
+  z-index: 3;
+  background-color: CornflowerBlue;
+  padding: 7px;
+  font-weight: bold;
+  font-size: 2vw;
+  outline: none;
+  border-radius: 20px;
+  border-width: 10px;
+}
+
+::-webkit-input-placeholder {
+   color: red;
+}
+
+.caixa {
+  position: absolute;
+  color: red;
+  width: 32vw;
+  font-size: 2.5vw;
+  margin-left: 37vw;
+  margin-top: 34.5vw;
+  z-index: 3;
 }
 
 #lista {
