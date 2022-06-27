@@ -28,69 +28,116 @@ function carregaJogo() {
   }
   document.getElementById('players').innerHTML = infoText; 
   desenho();
+ 
 }
 
 // Começar o jogo assim que clica no botão
+function configurarJogo() {
+
+  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'> <h2 class = 'info' style = 'top: 0vw'>TEMA:</h2><select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 33vw;'><option value='' >escolha o tema do jogo</option>";
+  for (var i = 0; i < assuntos.length; i++) {
+    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
+  }
+  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2><input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'> <h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2><input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'> <button class = 'ok' style = 'top: 15vw; left: 60%;'>OK</button>";
+  
+  document.getElementById('window').innerHTML = infoText;
+
+}
+
 function iniciarJogo() {
   contexto.clearRect(0, 0, tela.width, tela.height);
   var bla = shuffle(palavras);
   var word = bla[0];
   indice = 0;
+  document.getElementById('minhaCor').style.background = cores[indice]; // por enquanto
   iniciaTurno(word);
-  //document.getElementById('barra').innerHTML = "";
-  //document.getElementById('barra').innerHTML = "<img id = 'image2' src='https://i.imgur.com/QIkPEnO.png'>";
-  //document.getElementById('texto').innerHTML = "Votem 2 !!!";
 }
 
 function iniciaTurno(palavra) {
   
-  var jogador = jogadores[indice].nome;
-  var primeiro = true;
-  var tempo = 130;
+  // Para evitar iniciar o temporizador com o jogador desenhando
   if (pincel.ativo) {
     pincel.ativo = false;
   }
-  document.getElementById('texto').innerHTML = "Oi, desenhe " + palavra + ", " + jogador + "!";
+  
+  // Para garantir que o temporizador será iniciado
+  var primeiro = true;
+  
+  //Para finalizar o temporizador caso o jogador não desenhe no tempo adequado
+  var tempo = 122; 
+ 
+  // Seleciona o jogador correto para o turno
+  var jogador = jogadores[indice].nome;
+  
+  // Exibe a mensagem correta para o turno
+  document.getElementById('texto1').innerHTML = jogador + ",";
+  document.getElementById('texto2').innerHTML = "Desenhe " + palavra + ":";
+  
+  // Exibe a barra sem preenchimento
   var infoText = "<img id = 'image2' src='https://i.imgur.com/QIkPEnO.png'>";
   var num = 2.5;
+  
+  // Exibe a barra correspondente ao valor do temporizador do turno
   const myInterval = setInterval(function() {
+    
+    // Indica que o jogador começou a desenhar
     if (pincel.ativo) {
       primeiro = false;
     }
+    
+    // Reduz o tempo disponível par ao jogador desenhar no turno
     tempo--;
+    
+    // Continua o temporizador se ainda houver tempo e o jogador ainda não tiver desenhado nada
     if (tempo > 0 && (primeiro || pincel.ativo)) { 
-        if (num < 94) {
-          infoText += "<img id = 'left' src = 'https://i.imgur.com/3ilVR3y.png' style = 'left: " + num + "vw;'>";
-        } else {
-          infoText += "<img id = 'right' src='https://i.imgur.com/sg5bb38.png' style = 'right: 2.5vw;'>";
-        }  
-        num += 0.75;
+      if (num < 92) {
+        // Aumenta a barra do temporizador
+        infoText += "<img id = 'left' src = 'https://i.imgur.com/3ilVR3y.png' style = 'left: " + num + "vw;'>";
+      } else {
+        // Finaliza a barra do temporizador
+        infoText += "<img id = 'right' src='https://i.imgur.com/sg5bb38.png' style = 'right: 2.5vw;'>";
+      }  
+      
+      // Aumenta a próxima posição da barra do temporizador
+      num += 0.75;
+      
     } else {
+      // Finaliza temporizador do turno atual
       clearInterval(myInterval);
+      
+      // Se ainda tem jogador para o turno 1, seleciona-o para jogar 
       indice++;
+      document.getElementById('minhaCor').style.background = cores[indice]; // por enquanto
       if (indice < jogadores.length) {
         iniciaTurno(palavra);
       } else {
+        // Se não houver mais jogador para turno 1, inicia o turno 2
         if (!turno2) {
           turno2 = true;
           indice = 0;
           iniciaTurno(palavra);
         } else {
+          // Se não houver mais jogador para turno 2, finaliza rodada do jogo
           turno2 = false;
           indice = -1;
-          jogadores = null;
-          pincel.ativo = false;
-          pincel.indiceCor = -1;
-          contexto.strokeStyle = "black";
-          tela.removeEventListener("mousedown", iniciaMovimentoMouse); 
-          tela.removeEventListener("touchstart", iniciaMovimentoTouch);
-          document.getElementById('barra').innerHTML = "<img id = 'image2' src = 'https://i.imgur.com/QIkPEnO.png'>";
-          document.getElementById('texto').innerHTML = "Votem !!!";
+          
+          inicializaPincel();
+          finalizaRodada();
+
+        
+          //document.getElementById('barra').innerHTML = "<img id = 'image2' src = 'https://i.imgur.com/QIkPEnO.png'>";
+          //document.getElementById('texto').innerHTML = "Votem !!!";
         }
       }
     }      
     document.getElementById('barra').innerHTML = infoText;
-  }, 100);
+  }, 25);
+}
+
+function finalizaRodada() {
+  contexto.strokeStyle = "black";
+  tela.removeEventListener("mousedown", iniciaMovimentoMouse); 
+  tela.removeEventListener("touchstart", iniciaMovimentoTouch);
 }
 
 // Mostrando o tempo decorrido de jogo
@@ -114,6 +161,14 @@ const pincel = {
   posicao: {x: 0, y: 0},
   posicao: null,
   posicaoAnterior: null
+}
+
+function inicializaPincel(){
+  pincel.ativo = false;
+  pincel.movendo = false;
+  pincel.indiceCor = -1;
+  pincel.posicao = null;
+  pincel.posicaoAnterior = null;
 }
 
 //tela.addEventListener("mousedown", (evento) => {evento.preventDefault(); iniciaMovimentoMouse()}); 
@@ -303,51 +358,3 @@ async function exibeNomeComTempoOLD(jogador, atual) {
     }
   }, 1000);
 }
-
-/*else {
-          infoText += "<img id = 'right' src='https://i.imgur.com/sg5bb38.png' style = 'right: 2.5vw;'>";
-          indice++;
-          clearInterval(myInterval);
-          if (indice < jogadores.length) {
-            exibeNomeComTempo(palavra, 0);
-          } else {
-            if (!turno2) {
-              turno2 = true;
-              indice = 0;
-              exibeNomeComTempo(palavra, 0);
-            } else {
-              turno2 = false;
-              indice = -1;
-              jogadores = null;
-              pincel.ativo = false;
-              pincel.indiceCor = -1;
-              contexto.strokeStyle = "black";
-              tela.removeEventListener("mousedown", iniciaMovimentoMouse); 
-              tela.removeEventListener("touchstart", iniciaMovimentoTouch);
-              document.getElementById('barra').innerHTML = "<img id = 'image2' src='https://i.imgur.com/QIkPEnO.png'>";
-            }
-          } 
-        }
-      document.getElementById('barra').innerHTML = infoText;
-      atual++;
-    }	else {
-      clearInterval(myInterval);
-      indice++;
-      if (indice < jogadores.length) {
-        exibeNomeComTempo(palavra, 0);
-      } else {
-        if (!turno2) {
-          turno2 = true;
-          indice = 0;
-          exibeNomeComTempo(palavra, 0);
-        } else {
-          turno2 = false;
-          indice = -1;
-          jogadores = null;
-          pincel.ativo = false;
-          pincel.indiceCor = -1;
-          contexto.strokeStyle = "black";
-          tela.removeEventListener("mousedown", iniciaMovimentoMouse); 
-          tela.removeEventListener("touchstart", iniciaMovimentoTouch);
-          document.getElementById('barra').innerHTML = "<img id = 'image2' src='https://i.imgur.com/QIkPEnO.png'>";
-        }*/
