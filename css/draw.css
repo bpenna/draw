@@ -106,7 +106,7 @@ body {
 #image3 {
   position: absolute;
   width: 100%;
-  height: 86vh;
+  height: 82vh;
   margin-top: 19vw;
   left: 0px;
 }
@@ -181,14 +181,14 @@ body {
 #players {
   position: absolute;
   //border: 1px solid green;
-  height: 82vh;
+  height: 78vh;
   width: 35%;
   margin-top: 20vw;
 }
 
 #game {
   position: absolute;
-  height: 82vh;
+  height: 78vh;
   width: 62%;
   margin-top: 20vw;
   margin-left: 35%;
