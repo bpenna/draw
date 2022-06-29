@@ -39,12 +39,14 @@ body {
   position: absolute;
   padding: 2.5% 0 0 30%;
   color: white;
+  z-index: 2;
 }
 
 #texto2 {
   position: absolute;
   padding: 9% 0 0 30%;
   color: white;
+  z-index: 2;
 }
 
 .btn1 {
@@ -53,6 +55,7 @@ body {
   width: 6vw;
   height: 6vw;
   margin-top: 2%;
+  z-index: 2;
 }
 
 .btn2_ON {
@@ -61,6 +64,7 @@ body {
   width: 6vw;
   height: 6vw;
   margin-top: 8.5%;
+  z-index: 2;
 }
 
 .btn2_OFF {
@@ -70,6 +74,7 @@ body {
   height: 6vw;
   margin-top: 8.5%;
   opacity: 0.3;
+  z-index: 2;
 }
 
 #image2 {
@@ -79,10 +84,23 @@ body {
   left: 0px;
 }
 
-#left, #right {
+.passo {
   position: absolute;
   height: 1.75vw;
   margin-top: 16.4vw;
+}
+
+.tempo_ON {
+  position: absolute;
+  height: 1.75vw;
+  margin-top: 16.4vw;
+}
+
+.tempo_OFF {
+  position: absolute;
+  height: 1.75vw;
+  margin-top: 16.4vw;
+  content: url("");
 }
 
 #image3 {
@@ -112,28 +130,28 @@ body {
 
 .ok:enabled{
   position: absolute;
-  margin-top: 34vw;
+  margin-top: 34.5vw;
   z-index: 3;
-  background-color: CornflowerBlue;
-  border-color: #272262;
-  color: #272262;
+  border-color: #B4CDCD;
+  background-color: #272262; 
+  color: CornflowerBlue;
   padding: 7px;
   font-weight: bold;
-  font-size: 2vw;
+  font-size: 1.7vw;
   cursor: pointer;
   outline: none;
   border-radius: 20px;
-  border-width: 10px;
+  border-width: 7px;
 }
 
 .ok:disabled{
   osition: absolute;
-  margin-top: 34vw;
+  margin-top: 34.5vw;
   z-index: 3;
   background-color: CornflowerBlue;
   padding: 7px;
   font-weight: bold;
-  font-size: 2vw;
+  font-size: 1.7vw;
   outline: none;
   border-radius: 20px;
   border-width: 10px;
@@ -146,7 +164,7 @@ body {
 .caixa {
   position: absolute;
   color: red;
-  width: 32vw;
+  width: 30vw;
   font-size: 2.5vw;
   margin-left: 37vw;
   margin-top: 34.5vw;
@@ -178,7 +196,10 @@ body {
 
 #screen {
   border-left: 1px dotted whitesmoke;
+  //background: yellow;
+  //opacity: 0.1;
   cursor: crosshair;
   width: 100%;
   height: 100%;
 }
+
