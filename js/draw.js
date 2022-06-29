@@ -1,4 +1,4 @@
-var debugMode = true;
+var debugMode = false;
 var debugBase = false;
 
 // Informações para acessar os bancos de dados do SUPABASE
@@ -13,19 +13,45 @@ const PLAYER_COLOR = ["blue", "green", "red", "gold", "deeppink", "deepskyblue",
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+const pincel = {
+  ativo: false,
+  movendo: false,
+  indiceCor: -1,
+  //posicao: {x: 0, y: 0},
+  posicao: null,
+  //posicaoAnterior: {x: 0, y: 0},
+  posicaoAnterior: null,
+  nome: "",
+  pontos: 0,
+  ID: 0,
+  PIN: 0,
+  tema: "",
+  palavra: "",
+  numJogadores: 0,
+  adversarios: {}
+  //adversarios: {id: 0, nome: "", pontos: 0, cor: ""}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 var jogadores = null;
 var ordem = -1;
 var indice = -1;
 var turno2 = false;
 var jogoLigado = false;
-var nomes = ["Bernardo", "Carolina", "Eduardo", "Cristiane", "Henrique", "Luciana", "Andréia", "André", "Letícia", "Gabriela"]; 
 
-//var nomes = ["Bernardo", "Carolina", "Eduardo", "Cristiane"]; 
-var cores = ["blue", "green", "red", "gold", "deeppink", "deepskyblue", "lightgreen", "chocolate", "wheat", "magenta"];
+
 var assuntos = ["ESPORTES", "FRUTAS", "ESCRITÓRIO", "COZINHA", "CIDADE"];
 var palavras = ["ABACAXI", "BANANA", "CAJU", "DAMASCO", "FIGO", "GOIABA"];
 
-var pontos = [9,8,7,6,5,4,3,2,1,0];
+var votos = [];
+
+var nomes = [];
+var pontos = [];
+var cores = [];
+
+//var nomes = ["Bernardo", "Carolina", "Eduardo", "Cristiane", "Henrique", "Luciana", "Andréia", "André", "Letícia", "Gabriela"]; 
+//var pontos = [9,8,7,6,5,4,3,2,1,0];
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +193,19 @@ async function monitoraJogador(payload) {
       console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
       console.log("|_ _ _ _ _ _ _ _ _ _ _|");
     }
-
+      
+    if (payload.new.PIN == pincel.PIN) {
+      pincel.adversarios.[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      nomes[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].nome;
+      pontos[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].pontos;
+      cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
+      jogadores = ordena(nomes, pontos, cores);
+      atualizarNomes();
+      pincel.numJogadores++;
+      console.log("OPS: " + payload.new.NOME);
+      console.log("OPS: " + pincel.numJogadores);
+    }
+    
   } //INSERT 
     
   if (payload.eventType == "UPDATE") {
@@ -203,8 +241,6 @@ async function monitoraDesenho(payload) {
       console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
       console.log("|_ _ _ _ _ _ _ _ _ _ _|");
     }
-
-    console.log(payload)
     
     document.getElementById("screen").getContext("2d").beginPath();
     document.getElementById("screen").getContext("2d").moveTo(payload.new.X_i, payload.new.Y_i);
@@ -235,7 +271,6 @@ async function monitoraDesenho(payload) {
   } //DELETE 
   
 }
-
 
 // Utiliza realtime da tabela no SUPABASE para monitorar alterações
 async function monitoraSupabase() {
@@ -268,17 +303,7 @@ async function monitoraSupabase() {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Inicializa o jogo
-function carregarJogo() {
-  
-  document.getElementById("screen").addEventListener("mousedown", iniciaMovimentoMouse); 
-  document.getElementById("screen").addEventListener("mousemove", (evento) => {continuaMovimentoMouse(evento)});
-  document.getElementById("screen").addEventListener("mouseup", () => {finalizaMovimentoMouse()});
-  document.getElementById("screen").addEventListener("touchstart", iniciaMovimentoTouch); 
-  document.getElementById("screen").addEventListener("touchmove", (evento) => {evento.preventDefault(); continuaMovimentoTouch(evento)});
-  document.getElementById("screen").addEventListener("touchend", () => {finalizaMovimentoTouch()});
-  document.getElementById("screen").getContext("2d").lineWidth = 3;
-  jogadores = ordena(nomes, pontos, cores);
+function atualizarNomes() {
   var infoText = "";
   for (var i = 0; i < nomes.length; i++) {
     if (i == 0) {
@@ -290,6 +315,39 @@ function carregarJogo() {
     }
   }
   document.getElementById('players').innerHTML = infoText; 
+}
+
+// Inicializa o jogo
+async function carregarJogo() {
+  
+  // Preenche jogadores já cadastrados
+  var dados = await consultaInfoNoBancoDeDados(SUPABASE_PLAYERS);
+   
+  for (var i = 0; i < dados.length; i++) {
+    if (dados[i].PIN == pincel.PIN && dados[i].ID != pincel.ID) {
+      pincel.adversarios.[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      pincel.numJogadores++;
+      console.log(dados[i].NOME);
+      console.log(pincel.numJogadores);
+    }
+  }
+  
+  for (var i = 0; i < pincel.numJogadores; i++) {
+    nomes[i] = pincel.adversarios.[i].nome;
+    pontos[i] = pincel.adversarios.[i].pontos;
+    cores[i] = PLAYER_COLOR[i];
+  }
+  
+  document.getElementById("screen").addEventListener("mousedown", iniciaMovimentoMouse); 
+  document.getElementById("screen").addEventListener("mousemove", (evento) => {continuaMovimentoMouse(evento)});
+  document.getElementById("screen").addEventListener("mouseup", () => {finalizaMovimentoMouse()});
+  document.getElementById("screen").addEventListener("touchstart", iniciaMovimentoTouch); 
+  document.getElementById("screen").addEventListener("touchmove", (evento) => {evento.preventDefault(); continuaMovimentoTouch(evento)});
+  document.getElementById("screen").addEventListener("touchend", () => {finalizaMovimentoTouch()});
+  document.getElementById("screen").getContext("2d").lineWidth = 3;
+  
+  jogadores = ordena(nomes, pontos, cores);
+  atualizarNomes();
   desenho();
 }
 
@@ -310,11 +368,30 @@ function fecharJanela() {
   document.getElementById('window').innerHTML = "";
 }
 
-function exibirIniciar() {
-  fecharJanela();
-  document.getElementById('play').classList.remove("btn2_OFF");
-  document.getElementById('play').classList.add("btn2_ON");
-  document.getElementById('play').addEventListener("click", iniciarJogo); 
+async function exibirIniciar() {
+  
+  if (document.getElementById('tema').value == "") {
+    alert("Escolha um tema!");
+  } else {
+    pincel.tema = document.getElementById('tema').value;
+    if (document.getElementById('apelido').value == "") {
+      alert("Defina um nome!");
+    } else {
+      pincel.nome = document.getElementById('apelido').value;
+      if (document.getElementById('pin').value == "") {
+        alert("Digite um PIN!");
+      } else {
+        pincel.PIN = document.getElementById('pin').value;
+        document.getElementById('play').classList.remove("btn2_OFF");
+        document.getElementById('play').classList.add("btn2_ON");
+        document.getElementById('play').addEventListener("click", iniciarJogo); 
+        fecharJanela();
+        var dados = await adicionaInfoNoBancoDeDados(SUPABASE_PLAYERS, {NOME: pincel.nome, PONTOS: 0, PIN: pincel.PIN});
+        pincel.ID = dados[0].ID;
+        carregarJogo();
+      }
+    }
+  }
 }
 
 function exibirSair() {
@@ -333,9 +410,7 @@ function sairJogo() {
   finalizaRodada();
 }
 
-function iniciarJogo() {
-  carregarJogo();
-  
+function iniciarJogo() { 
   jogoLigado = true;
   iniciaRodada();
   exibirSair();
@@ -451,50 +526,52 @@ function computaVoto(indice) {
 var votos = [1, 0, 4, 3, 1, 1, 3, 0, 4, 8];
 
 function calculaVotacao() {
+
   
-  // continuar daqui!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // FAZER AQUI!!!!!!!!!!!!
   votos.sort(function (a, b) {return a - b});
   if (votos[0] > votos[1]) {
-    var vencedor = ordenados[0];
+    var vencedor = votos[0];
     console.log("Vencedor: " + vencedor);
   } else {
     console.log("Empate");
   }
-  console.log(ordenados)
+  console.log(votos)
+  
+  /*var entrada = [1, 2, 3, 4, 5, 2, 2, 3];
+  var ocorrencias = {};
+  for ( var i = 0 ; i < entrada.length ; i++ ) {
+    ocorrencias[entrada[i]] = 1 + (ocorrencias[entrada[i]] || 0);
+  }
+  var maior = null;
+  var ocorrenciasMaior = -1;
+  for ( var p in ocorrencias ) {
+    if ( ocorrencias[p] > ocorrenciasMaior ) {
+      maior = p;
+      ocorrenciasMaior = ocorrencias[p];
+    }
+  }*/
 }
 
-//function ordenaVotos(vetor) {
-//  for (var i = 0; i < vetor.length; i++) {
-//    vetor[i] = {nome: nome[i], ponto: ponto[i], cor: cor[i]};
-//  }
-//  vetor = ;
-//  return vetor;
-//}
-
 function finalizaRodada() {
-  
-  document.getElementById("barra").zIndex = 4;
-  
   document.getElementById("screen").getContext("2d").strokeStyle = "black";
   document.getElementById("screen").removeEventListener("mousedown", iniciaMovimentoMouse); 
   document.getElementById("screen").removeEventListener("touchstart", iniciaMovimentoTouch);
   document.getElementById("minhaCor").style.backgroundColor = "transparent";
   document.getElementById("texto1").innerHTML = "";
   document.getElementById("texto2").innerHTML = "";
-  
+  //document.getElementById("barra").zIndex = 4;
+  //document.getElementById('barra').innerHTML = "<img id = 'image2' src='https://i.imgur.com/cW8kDrL.png'>"; // não funciona 
   //var slides = document.getElementsByClassName("tempo_ON");
   //  for(var i = 0; i < slides.length; i++)  {
   //    slides[i].src = "";
   //}
-  
-  //document.getElementById('barra').innerHTML = "<img id = 'image2' src='https://i.imgur.com/cW8kDrL.png'>"; // não funciona 
-  
 }
 
 function iniciaRodada() {
-  document.getElementById("barra").zIndex = 1;
   document.getElementById("screen").addEventListener("mousedown", iniciaMovimentoMouse); 
   document.getElementById("screen").addEventListener("touchstart", iniciaMovimentoTouch);
+  //document.getElementById("barra").zIndex = 1;
 }
 
 // Mostrando o tempo decorrido de jogo
@@ -511,20 +588,11 @@ function temporizador(atual) {
       document.getElementById('texto1').innerHTML = "&nbsp; Quem é o farsante? (" + pad2(minJogo) + ":" + pad2(segJogo) + ")";
     }	else {
       clearInterval(myInterval);
-      //calculaVotacao(); colocar depois
+      calculaVotacao();
     }
   }, 1000);
   
   console.log("FIM VOTOS")
-}
-
-const pincel = {
-  ativo: false,
-  movendo: false,
-  indiceCor: -1,
-  posicao: {x: 0, y: 0},
-  posicao: null,
-  posicaoAnterior: null
 }
 
 function inicializaPincel(){
@@ -644,73 +712,3 @@ function ordena(nome, ponto, cor) {
 function pad2(s) {
   return (s < 10) ? '0' + s : s;
 } 
-
-
-/*
-
-function shuffle(o) {
-  for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-  return o;
-}
-
-function atualDataHora() {
-  var data = new Date();
-  var dia = data.getDate();
-  var mes = data.getMonth() + 1; // 0 é janeiro
-  var ano = data.getFullYear();
-  var hora = data.getHours(); // obtém horas do horário local
-  var min = data.getUTCMinutes(); // obtém minutos do horário universal
-
-  return pad2(dia) + "-" + pad2(mes) + "-" + ano + " (" + pad2(hora) + "h" + pad2(min) + "min)";
-}
-
-// Mostrando o tempo restante
-function contador(atual) {
-  const myInterval = setInterval(function() {
-    if (pincel.ativo) { 
-      atual--;
-      minJogo = (atual - (atual % 60)) / 60;
-      segJogo = (atual < 60) ? atual : atual - (minJogo * 60);
-      document.getElementById('texto').innerHTML = "TEMPO: " + pad2(minJogo) + ":" + pad2(segJogo);   
-    }	else {
-      clearInterval(myInterval);
-    }
-  }, 1000);
-}
-
-function atualData() {
-  var data = new Date();
-  var dia = data.getDate();
-  var mes = data.getMonth() + 1; // 0 é janeiro
-  var ano = data.getFullYear();
-  
-  return pad2(dia) + "-" + pad2(mes) + "-" + ano;
-}  
-  
-// Apresenta número com três dígitos
-function pad3(s) {
-  return (s < 100) ? '0' + pad2(s) : pad2(s);
-}
-
-// Mostrando o tempo restante
-async function exibeNomeComTempoOLD(jogador, atual) {
-  
-  var primeiro = true;
-  const myInterval = setInterval(function() {
-    if (pincel.ativo) {
-      primeiro = false;
-    } 
-    
-    //console.log(jogador + " " + pincel.ativo + " " + primeiro + " " + atual);
-    
-    if (atual > 0 && (primeiro || pincel.ativo)) { 
-      atual--;
-      minJogo = (atual - (atual % 60)) / 60;
-      segJogo = (atual < 60) ? atual : atual - (minJogo * 60);
-      document.getElementById('texto').innerHTML = jogador + ": " + pad2(minJogo) + ":" + pad2(segJogo);   
-    }	else {
-      clearInterval(myInterval);
-    }
-  }, 1000);
-}
-*/
