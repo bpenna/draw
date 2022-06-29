@@ -345,6 +345,7 @@ async function carregarJogo() {
   document.getElementById("screen").addEventListener("touchmove", (evento) => {evento.preventDefault(); continuaMovimentoTouch(evento)});
   document.getElementById("screen").addEventListener("touchend", () => {finalizaMovimentoTouch()});
   document.getElementById("screen").getContext("2d").lineWidth = 3;
+  document.getElementById('set').addEventListener("click", configurarJogo); 
   
   jogadores = ordena(nomes, pontos, cores);
   atualizarNomes();
@@ -712,3 +713,73 @@ function ordena(nome, ponto, cor) {
 function pad2(s) {
   return (s < 10) ? '0' + s : s;
 } 
+
+
+/*
+
+function shuffle(o) {
+  for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+  return o;
+}
+
+function atualDataHora() {
+  var data = new Date();
+  var dia = data.getDate();
+  var mes = data.getMonth() + 1; // 0 é janeiro
+  var ano = data.getFullYear();
+  var hora = data.getHours(); // obtém horas do horário local
+  var min = data.getUTCMinutes(); // obtém minutos do horário universal
+
+  return pad2(dia) + "-" + pad2(mes) + "-" + ano + " (" + pad2(hora) + "h" + pad2(min) + "min)";
+}
+
+// Mostrando o tempo restante
+function contador(atual) {
+  const myInterval = setInterval(function() {
+    if (pincel.ativo) { 
+      atual--;
+      minJogo = (atual - (atual % 60)) / 60;
+      segJogo = (atual < 60) ? atual : atual - (minJogo * 60);
+      document.getElementById('texto').innerHTML = "TEMPO: " + pad2(minJogo) + ":" + pad2(segJogo);   
+    }	else {
+      clearInterval(myInterval);
+    }
+  }, 1000);
+}
+
+function atualData() {
+  var data = new Date();
+  var dia = data.getDate();
+  var mes = data.getMonth() + 1; // 0 é janeiro
+  var ano = data.getFullYear();
+  
+  return pad2(dia) + "-" + pad2(mes) + "-" + ano;
+}  
+  
+// Apresenta número com três dígitos
+function pad3(s) {
+  return (s < 100) ? '0' + pad2(s) : pad2(s);
+}
+
+// Mostrando o tempo restante
+async function exibeNomeComTempoOLD(jogador, atual) {
+  
+  var primeiro = true;
+  const myInterval = setInterval(function() {
+    if (pincel.ativo) {
+      primeiro = false;
+    } 
+    
+    //console.log(jogador + " " + pincel.ativo + " " + primeiro + " " + atual);
+    
+    if (atual > 0 && (primeiro || pincel.ativo)) { 
+      atual--;
+      minJogo = (atual - (atual % 60)) / 60;
+      segJogo = (atual < 60) ? atual : atual - (minJogo * 60);
+      document.getElementById('texto').innerHTML = jogador + ": " + pad2(minJogo) + ":" + pad2(segJogo);   
+    }	else {
+      clearInterval(myInterval);
+    }
+  }, 1000);
+}
+*/
