@@ -305,6 +305,19 @@ async function monitoraSupabase() {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Começar o jogo assim que clica no botão
+function configurarJogo() {
+
+  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'> <h2 class = 'info' style = 'top: 0vw'>TEMA:</h2><select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 31vw;'><option value='' >escolha o tema do jogo</option>";
+  for (var i = 0; i < assuntos.length; i++) {
+    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
+  }
+  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2><input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'> <h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2><input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'> <button class = 'ok' onclick = 'fecharJanela()' style = 'top: 15vw; left: 30%;'>CANCEL</button> <button class = 'ok' onclick = 'exibirIniciar()' style = 'top: 15vw; left: 60%;'>OK</button>";
+  
+  document.getElementById('window').innerHTML = infoText;
+
+}
+
 function atualizarNomes() {
   var infoText = "";
   for (var i = 0; i < nomes.length; i++) {
@@ -352,19 +365,6 @@ async function carregarJogo() {
   jogadores = ordena(nomes, pontos, cores);
   atualizarNomes();
   desenho();
-}
-
-// Começar o jogo assim que clica no botão
-function configurarJogo() {
-
-  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'> <h2 class = 'info' style = 'top: 0vw'>TEMA:</h2><select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 31vw;'><option value='' >escolha o tema do jogo</option>";
-  for (var i = 0; i < assuntos.length; i++) {
-    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
-  }
-  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2><input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'> <h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2><input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'> <button class = 'ok' onclick = 'fecharJanela()' style = 'top: 15vw; left: 30%;'>CANCEL</button> <button class = 'ok' onclick = 'exibirIniciar()' style = 'top: 15vw; left: 60%;'>OK</button>";
-  
-  document.getElementById('window').innerHTML = infoText;
-
 }
 
 function fecharJanela() {  
