@@ -22,6 +22,7 @@ const pincel = {
   //posicaoAnterior: {x: 0, y: 0},
   posicaoAnterior: null,
   nome: "",
+  cor: "",
   pontos: 0,
   ID: 0,
   PIN: 0,
@@ -55,6 +56,7 @@ var cores = [];
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+document.getElementById('set').addEventListener("click", configurarJogo); 
 // Inicializa cliente do Supabase (banco de dados atua como servidor)
 const _supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -194,7 +196,7 @@ async function monitoraJogador(payload) {
       console.log("|_ _ _ _ _ _ _ _ _ _ _|");
     }
       
-    if (payload.new.PIN == pincel.PIN) {
+    if (payload.new.PIN == pincel.PIN && payload.new.ID != pincel.ID) {
       pincel.adversarios.[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
       nomes[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].nome;
       pontos[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].pontos;
@@ -324,7 +326,8 @@ async function carregarJogo() {
   var dados = await consultaInfoNoBancoDeDados(SUPABASE_PLAYERS);
    
   for (var i = 0; i < dados.length; i++) {
-    if (dados[i].PIN == pincel.PIN && dados[i].ID != pincel.ID) {
+    //if (dados[i].PIN == pincel.PIN && dados[i].ID != pincel.ID) {
+    if (dados[i].PIN == pincel.PIN) {
       pincel.adversarios.[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
       pincel.numJogadores++;
       console.log(dados[i].NOME);
@@ -345,7 +348,6 @@ async function carregarJogo() {
   document.getElementById("screen").addEventListener("touchmove", (evento) => {evento.preventDefault(); continuaMovimentoTouch(evento)});
   document.getElementById("screen").addEventListener("touchend", () => {finalizaMovimentoTouch()});
   document.getElementById("screen").getContext("2d").lineWidth = 3;
-  document.getElementById('set').addEventListener("click", configurarJogo); 
   
   jogadores = ordena(nomes, pontos, cores);
   atualizarNomes();
@@ -389,6 +391,8 @@ async function exibirIniciar() {
         fecharJanela();
         var dados = await adicionaInfoNoBancoDeDados(SUPABASE_PLAYERS, {NOME: pincel.nome, PONTOS: 0, PIN: pincel.PIN});
         pincel.ID = dados[0].ID;
+        pincel.cor = PLAYER_COLOR[pincel.numJogadores];
+        document.getElementById('minhaCor').style.background = pincel.cor;
         carregarJogo();
       }
     }
@@ -419,7 +423,7 @@ function iniciarJogo() {
   var word = palavras[0];
   indice = 0;
   ordem = 0;
-  document.getElementById('minhaCor').style.background = cores[indice]; // por enquanto
+  //document.getElementById('minhaCor').style.background = cores[indice]; // por enquanto
   iniciaTurno(word);
 }
 
