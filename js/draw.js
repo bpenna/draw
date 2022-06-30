@@ -33,6 +33,25 @@ const pincel = {
   //adversarios: {id: 0, nome: "", pontos: 0, cor: ""}
 }
 
+// Exibe janela para escolha dos parâmetros do jogo
+function exibeParametros() {
+
+  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'>";
+  infoText += "<h2 class = 'info' style = 'top: 0vw'>TEMA:</h2>";
+  infoText += "<select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 31vw;'><option value='' >escolha o tema do jogo</option>";
+  for (var i = 0; i < assuntos.length; i++) {
+    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
+  }
+  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2>";
+  infoText += "<input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'>";
+  infoText += "<h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2>";
+  infoText += "<input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'>";
+  infoText += "<button class = 'ok' onclick = 'fechaJanela()' style = 'top: 15vw; left: 30%;'>CANCEL</button>";
+  infoText += "<button class = 'ok' onclick = 'avaliaParametros()' style = 'top: 15vw; left: 60%;'>OK</button>";
+  document.getElementById('window').innerHTML = infoText;
+
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 var jogadores = null;
@@ -55,24 +74,6 @@ var cores = [];
 //var pontos = [9,8,7,6,5,4,3,2,1,0];
 
 /////////////////////////////////////////////////////////////////////////////////////
-
-document.getElementById('set').addEventListener("click", configurarJogo); 
-// Inicializa cliente do Supabase (banco de dados atua como servidor)
-const _supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Inicializa as informações na criação da sessão
-consultaInfoNoBancoDeDados(SUPABASE_PLAYERS).then((gameInfo) => {
-  
-  // Exibe a tela inicial com informações das salas
-  //inicializaTela(gameInfo).then(() => {});
-
-  // Monitora as tabelas do SUPABASE
-  monitoraSupabase().then(() => {});
-  
-  // Monitora o botão da sala e as teclas pressionadas pelo jogador
-  //monitoraTela().then(() => {});
-
-});
 
 // Consulta informações na tabela do SUPABASE
 async function consultaInfoNoBancoDeDados(tableName) {
@@ -185,95 +186,6 @@ async function removeInfoNoBancoDeDados(tableName, id, value) {
   return data;
 }
 
-// Define ações caso haja alguma alteração nas tabelas dos jogadores (INSERT, UPDATE, DELETE)
-async function monitoraJogador(payload) {
-
-  if (payload.eventType == "INSERT") {
-              
-    if (debugBase) { 
-      console.log("> - - - - - - - - - - <");
-      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
-      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
-    }
-      
-    if (payload.new.PIN == pincel.PIN && payload.new.ID != pincel.ID) {
-      pincel.adversarios.[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
-      nomes[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].nome;
-      pontos[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].pontos;
-      cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
-      jogadores = ordena(nomes, pontos, cores);
-      atualizarNomes();
-      pincel.numJogadores++;
-      console.log("OPS: " + payload.new.NOME);
-      console.log("OPS: " + pincel.numJogadores);
-    }
-    
-  } //INSERT 
-    
-  if (payload.eventType == "UPDATE") {
-        
-    if (debugBase) {
-      console.log("> - - - - - - - - - - <");
-      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
-      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
-    }
-        
-  } //UPDATE
-  
-  // Caso algum jogador tenha saído de uma sala
-  if (payload.eventType == "DELETE") {
-        
-    if (debugBase) {
-      console.log("> - - - - - - - - - - <");
-      console.log("MONITORADO: " + payload.eventType, ": ", payload.old);
-      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
-    }
-
-  } //DELETE 
-  
-}
-
-// Define ações caso haja alguma alteração nas tabelas dos desenhos (INSERT, UPDATE, DELETE)
-async function monitoraDesenho(payload) {
-
-  if (payload.eventType == "INSERT") {
-              
-    if (debugBase) { 
-      console.log("> - - - - - - - - - - <");
-      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
-      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
-    }
-    
-    document.getElementById("screen").getContext("2d").beginPath();
-    document.getElementById("screen").getContext("2d").moveTo(payload.new.X_i, payload.new.Y_i);
-    document.getElementById("screen").getContext("2d").lineTo(payload.new.X_f, payload.new.Y_f);
-    document.getElementById("screen").getContext("2d").stroke();
-    
-  } //INSERT 
-    
-  if (payload.eventType == "UPDATE") {
-        
-    if (debugBase) {
-      console.log("> - - - - - - - - - - <");
-      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
-      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
-    }
-        
-  } //UPDATE
-  
-  // Caso algum jogador tenha saído de uma sala
-  if (payload.eventType == "DELETE") {
-        
-    if (debugBase) {
-      console.log("> - - - - - - - - - - <");
-      console.log("MONITORADO: " + payload.eventType, ": ", payload.old);
-      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
-    }
-
-  } //DELETE 
-  
-}
-
 // Utiliza realtime da tabela no SUPABASE para monitorar alterações
 async function monitoraSupabase() {
   const data = await _supa.from('*')
@@ -305,55 +217,215 @@ async function monitoraSupabase() {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-// Começar o jogo assim que clica no botão
-function configurarJogo() {
+// Inicializa cliente do SUPABASE (banco de dados atua como servidor)
+const _supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'> <h2 class = 'info' style = 'top: 0vw'>TEMA:</h2><select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 31vw;'><option value='' >escolha o tema do jogo</option>";
-  for (var i = 0; i < assuntos.length; i++) {
-    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
-  }
-  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2><input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'> <h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2><input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'> <button class = 'ok' onclick = 'fecharJanela()' style = 'top: 15vw; left: 30%;'>CANCEL</button> <button class = 'ok' onclick = 'exibirIniciar()' style = 'top: 15vw; left: 60%;'>OK</button>";
+// Monitora as tabelas do SUPABASE
+monitoraSupabase().then(() => {});
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Define ações caso haja alguma alteração nas tabelas dos jogadores (INSERT, UPDATE, DELETE)
+async function monitoraJogador(payload) {
+
+  if (payload.eventType == "INSERT") {
+              
+    if (debugBase) { 
+      console.log("> - - - - - - - - - - <");
+      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
+      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
+    }
+      
+    if (payload.new.PIN == pincel.PIN && payload.new.ID != pincel.ID) {
+      pincel.adversarios[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      nomes[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].nome;
+      pontos[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].pontos;
+      cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
+      jogadores = ordena(nomes, pontos, cores);
+      exibeNomes();
+      pincel.numJogadores++;
+    }
+    
+  } //INSERT 
+    
+  if (payload.eventType == "UPDATE") {
+        
+    if (debugBase) {
+      console.log("> - - - - - - - - - - <");
+      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
+      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
+    }
+        
+    /*
+    // Ver aqui o que faz se jogador alterar parâmetro (TEMA, PIN ou NOME)
+    */
+    
+  } //UPDATE
   
-  document.getElementById('window').innerHTML = infoText;
+  // Caso algum jogador tenha saído de uma sala
+  if (payload.eventType == "DELETE") {
+        
+    if (debugBase) {
+      console.log("> - - - - - - - - - - <");
+      console.log("MONITORADO: " + payload.eventType, ": ", payload.old);
+      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
+    }
 
+  } //DELETE 
+  
 }
 
-function atualizarNomes() {
+// Define ações caso haja alguma alteração nas tabelas dos desenhos (INSERT, UPDATE, DELETE)
+async function monitoraDesenho(payload) {
+
+  if (payload.eventType == "INSERT") {
+              
+    if (debugBase) { 
+      console.log("> - - - - - - - - - - <");
+      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
+      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
+    }
+    
+    // Exibe o desenho do banco de dados na tela
+    document.getElementById("screen").getContext("2d").beginPath();
+    document.getElementById("screen").getContext("2d").moveTo(payload.new.X_i, payload.new.Y_i);
+    document.getElementById("screen").getContext("2d").lineTo(payload.new.X_f, payload.new.Y_f);
+    document.getElementById("screen").getContext("2d").stroke();
+    
+  } //INSERT 
+    
+  if (payload.eventType == "UPDATE") {
+        
+    if (debugBase) {
+      console.log("> - - - - - - - - - - <");
+      console.log("MONITORADO: " + payload.eventType, ": ", payload.new);
+      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
+    }
+        
+  } //UPDATE
+  
+  // Caso algum jogador tenha saído de uma sala
+  if (payload.eventType == "DELETE") {
+        
+    if (debugBase) {
+      console.log("> - - - - - - - - - - <");
+      console.log("MONITORADO: " + payload.eventType, ": ", payload.old);
+      console.log("|_ _ _ _ _ _ _ _ _ _ _|");
+    }
+
+  } //DELETE 
+  
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Verifica se parâmetros do jogo foram escolhidos corretamente
+async function avaliaParametros() { //exibirIniciar
+  
+  if (document.getElementById('tema').value == "") {
+    alert("Escolha um tema!");
+  } else {
+    if (document.getElementById('apelido').value == "") {
+      alert("Defina um nome!");
+    } else {
+      if (document.getElementById('pin').value == "") {
+        alert("Digite um PIN!");
+      } else {
+               
+        // Atualiza parâmetros definidos pelo jogador
+        pincel.tema = document.getElementById('tema').value;
+        pincel.nome = document.getElementById('apelido').value;
+        pincel.PIN = document.getElementById('pin').value;
+            
+        // Habilita botão de entrar 
+        exibeEntrar();
+        
+        // Exibe jogadores já existentes
+        carregaJogo();
+       
+        // Verifica se jogador já existe no banco de dados
+        var jogadoresBD = await consultaInfoNoBancoDeDados(SUPABASE_PLAYERS);
+        var existeJogador = false;
+   
+        // Salva parâmetros do jogador no banco de dados (se já houver jogador)
+        if (pincel.ID > 0) {
+          for (var i = 0; i < jogadoresBD.length; i++) {
+            if (jogadoresBD[i].ID == pincel.ID) {
+              // altera informações do jogador no banco de dados (FAZER 1)
+              // atualizar no UPDATE de jogador também (FAZER 2)
+              existeJogador = true;
+            } 
+          }
+        }
+        
+        // Salva parâmetros do jogador no banco de dados (se não houver jogador)
+        if (!existeJogador) {
+          var dados = await adicionaInfoNoBancoDeDados(SUPABASE_PLAYERS, {NOME: pincel.nome, PONTOS: 0, PIN: pincel.PIN});
+          pincel.ID = dados[0].ID;
+          pincel.cor = PLAYER_COLOR[pincel.numJogadores];
+          document.getElementById('minhaCor').style.background = pincel.cor;
+          
+          nomes[pincel.numJogadores] = pincel.nome;
+          pontos[pincel.numJogadores] = 0;
+          cores[pincel.numJogadores] = pincel.cor;
+          jogadores = ordena(nomes, pontos, cores);
+          pincel.numJogadores++;
+        }
+
+        // Para exibir novo jogador
+        exibeNomes();
+        
+      }
+    }
+  }
+}
+
+// Fecha janela de parâmetros do jogo
+function fechaJanela() {  
+  document.getElementById('window').innerHTML = "";
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+// Exibe nomes dos jogadores do jogo atual
+function exibeNomes() {
+  
   var infoText = "";
-  for (var i = 0; i < nomes.length; i++) {
+  for (var i = 0; i < jogadores.length; i++) {
     if (i == 0) {
       infoText += "<ol id = 'lista'> ";
     }
     infoText += "<li style = 'color: " + jogadores[i].cor + ";'> (" + pad2(jogadores[i].ponto) + ") " + jogadores[i].nome + " </li> ";
-    if (i == nomes.length - 1) {
+    if (i == jogadores.length - 1) {
       infoText += "</ol>";
     }
   }
   document.getElementById('players').innerHTML = infoText; 
 }
 
-// Inicializa o jogo
-async function carregarJogo() {
+// Carregar o jogo com as informações iniciais
+async function carregaJogo() {
   
-  // Preenche jogadores já cadastrados
+  // Consulta jogadores no banco de dados
   var dados = await consultaInfoNoBancoDeDados(SUPABASE_PLAYERS);
    
+  // Preenche a lista de adversários já cadastrados
   for (var i = 0; i < dados.length; i++) {
-    //if (dados[i].PIN == pincel.PIN && dados[i].ID != pincel.ID) {
     if (dados[i].PIN == pincel.PIN) {
       pincel.adversarios.[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
       pincel.numJogadores++;
-      console.log(dados[i].NOME);
-      console.log(pincel.numJogadores);
     }
   }
   
+  // Preenche a lista de jogadores
   for (var i = 0; i < pincel.numJogadores; i++) {
     nomes[i] = pincel.adversarios.[i].nome;
     pontos[i] = pincel.adversarios.[i].pontos;
     cores[i] = PLAYER_COLOR[i];
   }
+  jogadores = ordena(nomes, pontos, cores);
   
+  // Habilita ações de detecção de mouse e touch para o jogo
   document.getElementById("screen").addEventListener("mousedown", iniciaMovimentoMouse); 
   document.getElementById("screen").addEventListener("mousemove", (evento) => {continuaMovimentoMouse(evento)});
   document.getElementById("screen").addEventListener("mouseup", () => {finalizaMovimentoMouse()});
@@ -362,51 +434,46 @@ async function carregarJogo() {
   document.getElementById("screen").addEventListener("touchend", () => {finalizaMovimentoTouch()});
   document.getElementById("screen").getContext("2d").lineWidth = 3;
   
-  jogadores = ordena(nomes, pontos, cores);
-  atualizarNomes();
+  // Exibe os nomes dos jogadores já cadastrados no jogo
+  exibeNomes();
+  
+  // Habilita tela para exibir desenhos
   desenho();
 }
 
-function fecharJanela() {  
-  document.getElementById('window').innerHTML = "";
+// Habilita a detecção de mouse e de toque
+function iniciaRodada() {
+  document.getElementById("screen").addEventListener("mousedown", iniciaMovimentoMouse); 
+  document.getElementById("screen").addEventListener("touchstart", iniciaMovimentoTouch);
 }
 
-async function exibirIniciar() {
-  
-  if (document.getElementById('tema').value == "") {
-    alert("Escolha um tema!");
-  } else {
-    pincel.tema = document.getElementById('tema').value;
-    if (document.getElementById('apelido').value == "") {
-      alert("Defina um nome!");
-    } else {
-      pincel.nome = document.getElementById('apelido').value;
-      if (document.getElementById('pin').value == "") {
-        alert("Digite um PIN!");
-      } else {
-        pincel.PIN = document.getElementById('pin').value;
-        document.getElementById('play').classList.remove("btn2_OFF");
-        document.getElementById('play').classList.add("btn2_ON");
-        document.getElementById('play').addEventListener("click", iniciarJogo); 
-        fecharJanela();
-        var dados = await adicionaInfoNoBancoDeDados(SUPABASE_PLAYERS, {NOME: pincel.nome, PONTOS: 0, PIN: pincel.PIN});
-        pincel.ID = dados[0].ID;
-        pincel.cor = PLAYER_COLOR[pincel.numJogadores];
-        document.getElementById('minhaCor').style.background = pincel.cor;
-        carregarJogo();
-      }
-    }
-  }
+// Desabilita a detecção de mouse e de toque, além de limpar os textos da rodada
+function finalizaRodada() {
+  document.getElementById("screen").getContext("2d").strokeStyle = "black";
+  document.getElementById("screen").removeEventListener("mousedown", iniciaMovimentoMouse); 
+  document.getElementById("screen").removeEventListener("touchstart", iniciaMovimentoTouch);
+  document.getElementById("minhaCor").style.backgroundColor = "transparent";
+  document.getElementById("texto1").innerHTML = "";
+  document.getElementById("texto2").innerHTML = "";
 }
 
-function exibirSair() {
-  fecharJanela();
+// Habilita botão de sair do jogo
+function exibeSair() {
   document.getElementById('stop').classList.remove("btn2_OFF");
   document.getElementById('stop').classList.add("btn2_ON");
-  document.getElementById('stop').addEventListener("click", sairJogo); 
+  document.getElementById('stop').addEventListener("click", encerraJogo); 
+  fechaJanela();
 }
 
-function sairJogo() {
+// Habilita botão de entrar no jogo
+function exibeEntrar() {
+  document.getElementById('play').classList.remove("btn2_OFF");
+  document.getElementById('play').classList.add("btn2_ON");
+  document.getElementById('play').addEventListener("click", iniciaJogo); 
+  fechaJanela();
+}
+
+function encerraJogo() { //sairJogo
   jogoLigado = false;
   turno2 = false;
   indice = -1;
@@ -415,18 +482,25 @@ function sairJogo() {
   finalizaRodada();
 }
 
-function iniciarJogo() { 
+function iniciaJogo() { 
+  
+  // Sinalizador sobre início do jogo
   jogoLigado = true;
+  
+  
+  exibeSair();
+  
   iniciaRodada();
-  exibirSair();
+  
   document.getElementById("screen").getContext("2d").clearRect(0, 0, document.getElementById("screen").width, document.getElementById("screen").height);
   var word = palavras[0];
   indice = 0;
   ordem = 0;
-  //document.getElementById('minhaCor').style.background = cores[indice]; // por enquanto
+
   iniciaTurno(word);
 }
 
+// Inicia o primeiro turno do jogo
 function iniciaTurno(palavra) {
   
   // Para evitar iniciar o temporizador com o jogador desenhando
@@ -481,7 +555,7 @@ function iniciaTurno(palavra) {
       
       // Se ainda tem jogador para o turno 1, seleciona-o para jogar 
       indice++;
-      document.getElementById('minhaCor').style.background = cores[indice]; // por enquanto
+      
       if (indice < jogadores.length) {
         iniciaTurno(palavra);
       } else {
@@ -556,27 +630,6 @@ function calculaVotacao() {
       ocorrenciasMaior = ocorrencias[p];
     }
   }*/
-}
-
-function finalizaRodada() {
-  document.getElementById("screen").getContext("2d").strokeStyle = "black";
-  document.getElementById("screen").removeEventListener("mousedown", iniciaMovimentoMouse); 
-  document.getElementById("screen").removeEventListener("touchstart", iniciaMovimentoTouch);
-  document.getElementById("minhaCor").style.backgroundColor = "transparent";
-  document.getElementById("texto1").innerHTML = "";
-  document.getElementById("texto2").innerHTML = "";
-  //document.getElementById("barra").zIndex = 4;
-  //document.getElementById('barra').innerHTML = "<img id = 'image2' src='https://i.imgur.com/cW8kDrL.png'>"; // não funciona 
-  //var slides = document.getElementsByClassName("tempo_ON");
-  //  for(var i = 0; i < slides.length; i++)  {
-  //    slides[i].src = "";
-  //}
-}
-
-function iniciaRodada() {
-  document.getElementById("screen").addEventListener("mousedown", iniciaMovimentoMouse); 
-  document.getElementById("screen").addEventListener("touchstart", iniciaMovimentoTouch);
-  //document.getElementById("barra").zIndex = 1;
 }
 
 // Mostrando o tempo decorrido de jogo
