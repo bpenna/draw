@@ -33,27 +33,6 @@ const pincel = {
   //adversarios: {id: 0, nome: "", pontos: 0, cor: ""}
 }
 
-// Exibe janela para escolha dos parâmetros do jogo
-/*function exibeParametros() {
-
-  var assuntos = ["ESPORTES", "FRUTAS", "ESCRITÓRIO", "COZINHA", "CIDADE"];
-  
-  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'>";
-  infoText += "<h2 class = 'info' style = 'top: 0vw'>TEMA:</h2>";
-  infoText += "<select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 31vw;'><option value='' >escolha o tema do jogo</option>";
-  for (var i = 0; i < assuntos.length; i++) {
-    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
-  }
-  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2>";
-  infoText += "<input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'>";
-  infoText += "<h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2>";
-  infoText += "<input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'>";
-  infoText += "<button class = 'ok' onclick = 'fechaJanela()' style = 'top: 15vw; left: 30%;'>CANCEL</button>";
-  infoText += "<button class = 'ok' onclick = 'avaliaParametros()' style = 'top: 15vw; left: 60%;'>OK</button>";
-  document.getElementById('window').innerHTML = infoText;
-
-}*/
-
 /////////////////////////////////////////////////////////////////////////////////////
 
 var jogadores = null;
@@ -62,6 +41,7 @@ var indice = -1;
 var turno2 = false;
 var jogoLigado = false;
 
+var assuntos = ["ESPORTES", "FRUTAS", "ESCRITÓRIO", "COZINHA", "CIDADE"];
 var palavras = ["ABACAXI", "BANANA", "CAJU", "DAMASCO", "FIGO", "GOIABA"];
 
 var votos = [];
@@ -319,6 +299,25 @@ async function monitoraDesenho(payload) {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Exibe janela para escolha dos parâmetros do jogo
+function exibeParametros() {
+ 
+  var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'>";
+  infoText += "<h2 class = 'info' style = 'top: 0vw'>TEMA:</h2>";
+  infoText += "<select id = 'tema' class = 'caixa' style = 'top: 0.5vw; width: 31vw;'><option value='' >escolha o tema do jogo</option>";
+  for (var i = 0; i < assuntos.length; i++) {
+    infoText += "<option value = '" + assuntos[i] + "'>" + assuntos[i] + "</option>";
+  }
+  infoText += "</select> <h2 class = 'info' style = 'top: 5vw'>NOME:</h2>";
+  infoText += "<input type = 'text' id = 'apelido' class = 'caixa' style = 'top: 5vw' placeholder = 'defina seu apelido aqui'>";
+  infoText += "<h2 class = 'info' style = 'top: 10vw'>Nº PIN:</h2>";
+  infoText += "<input type = 'text' id = 'pin' class = 'caixa' style = 'top: 10vw' placeholder = 'digite o PIN para jogar'>";
+  infoText += "<button class = 'ok' onclick = 'fechaJanela()' style = 'top: 15vw; left: 30%;'>CANCEL</button>";
+  infoText += "<button class = 'ok' onclick = 'avaliaParametros()' style = 'top: 15vw; left: 60%;'>OK</button>";
+  document.getElementById('window').innerHTML = infoText;
+
+}
+
 // Verifica se parâmetros do jogo foram escolhidos corretamente
 async function avaliaParametros() { //exibirIniciar
   
@@ -412,7 +411,7 @@ async function carregaJogo() {
   // Preenche a lista de adversários já cadastrados
   for (var i = 0; i < dados.length; i++) {
     if (dados[i].PIN == pincel.PIN) {
-      pincel.adversarios.[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      pincel.adversarios[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
       pincel.numJogadores++;
     }
   }
