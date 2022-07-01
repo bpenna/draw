@@ -418,8 +418,8 @@ async function carregaJogo() {
   
   // Preenche a lista de jogadores
   for (var i = 0; i < pincel.numJogadores; i++) {
-    nomes[i] = pincel.adversarios.[i].nome;
-    pontos[i] = pincel.adversarios.[i].pontos;
+    nomes[i] = pincel.adversarios[i].nome;
+    pontos[i] = pincel.adversarios[i].pontos;
     cores[i] = PLAYER_COLOR[i];
   }
   jogadores = ordena(nomes, pontos, cores);
