@@ -825,7 +825,7 @@ async function exibeNomeComTempoOLD(jogador, atual) {
 */
 
 // Exibe janela para escolha dos parâmetros do jogo
-function exibeParametros() {
+const exibeParametros = () => {
 
   var infoText = "<img id = 'janela' src = 'https://i.imgur.com/omWqxaL.png'>";
   infoText += "<h2 class = 'info' style = 'top: 0vw'>TEMA:</h2>";
