@@ -28,8 +28,8 @@ const pincel = {
   PIN: 0,
   tema: "",
   palavra: "",
-  numJogadores: 0,
-  adversarios: {}
+  numJogadores: 0//,
+  //adversarios: {} // ver se precisa desse vetor!!!
   //adversarios: {id: 0, nome: "", pontos: 0, cor: ""}
 }
 
@@ -217,9 +217,12 @@ async function monitoraJogador(payload) {
     }
       
     if (payload.new.PIN == pincel.PIN && payload.new.ID != pincel.ID) {
-      pincel.adversarios[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
-      nomes[pincel.numJogadores] = pincel.adversarios[pincel.numJogadores].nome;
-      pontos[pincel.numJogadores] = pincel.adversarios[pincel.numJogadores].pontos;
+      //pincel.adversarios[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      //nomes[pincel.numJogadores] = pincel.adversarios[pincel.numJogadores].nome;
+      //pontos[pincel.numJogadores] = pincel.adversarios[pincel.numJogadores].pontos;
+      //cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
+      nomes[pincel.numJogadores] = payload.new.NOME;
+      pontos[pincel.numJogadores] = payload.new.PONTOS;
       cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
       jogadores = ordena(nomes, pontos, cores);
       exibeNomes();
@@ -411,17 +414,20 @@ async function carregaJogo() {
   // Preenche a lista de adversários já cadastrados
   for (var i = 0; i < dados.length; i++) {
     if (dados[i].PIN == pincel.PIN) {
-      pincel.adversarios[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      //pincel.adversarios[pincel.numJogadores] = {id: dados[i].ID, nome: dados[i].NOME, pontos: dados[i].PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
+      nomes[pincel.numJogadores] = dados[i].NOME;
+      pontos[pincel.numJogadores] = dados[i].PONTOS;
+      cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
       pincel.numJogadores++;
     }
   }
   
   // Preenche a lista de jogadores
-  for (var i = 0; i < pincel.numJogadores; i++) {
-    nomes[i] = pincel.adversarios[i].nome;
-    pontos[i] = pincel.adversarios[i].pontos;
-    cores[i] = PLAYER_COLOR[i];
-  }
+  //for (var i = 0; i < pincel.numJogadores; i++) {
+  //  nomes[i] = pincel.adversarios[i].nome;
+  //  pontos[i] = pincel.adversarios[i].pontos;
+  //  cores[i] = PLAYER_COLOR[i];
+  //}
   jogadores = ordena(nomes, pontos, cores);
   
   // Habilita ações de detecção de mouse e touch para o jogo
@@ -514,7 +520,8 @@ function iniciaTurno(palavra) {
   var tempo = 122; 
  
   // Seleciona o jogador correto para o turno
-  var jogador = jogadores[indice].nome;
+  //var jogador = jogadores[indice].nome;
+  var jogador = nomes[indice];
   
   // Exibe a mensagem correta para o turno
   document.getElementById('texto1').innerHTML = jogador + ",";
@@ -576,7 +583,7 @@ function iniciaTurno(palavra) {
       }
     }      
     document.getElementById('barra').innerHTML = infoText;
-  }, 25);
+  }, 50);
 }
 
 function iniciaVotacao() {
@@ -666,8 +673,9 @@ function iniciaMovimentoMouse(e) {
   e.preventDefault();
   if (debugMode) {console.log("INÍCIO DO TURNO")};
   pincel.ativo = true;
-  pincel.indiceCor = indice;
-  document.getElementById("screen").getContext("2d").strokeStyle = cores[pincel.indiceCor];
+  //pincel.indiceCor = indice;
+  //document.getElementById("screen").getContext("2d").strokeStyle = cores[pincel.indiceCor];
+  document.getElementById("screen").getContext("2d").strokeStyle = cores[indice];
   
   if (debugMode) {
     console.log(document.getElementById("game").offsetTop); 
@@ -688,8 +696,9 @@ function iniciaMovimentoTouch(evento) {
   const newY = (evento.changedTouches[0].pageY - rect.top) * document.getElementById("screen").height / rect.height; 
   pincel.posicaoAnterior = {x: newX, y: newY};
   pincel.ativo = true;
-  pincel.indiceCor = indice;
-  document.getElementById("screen").getContext("2d").strokeStyle = cores[pincel.indiceCor];
+  //pincel.indiceCor = indice;
+  //document.getElementById("screen").getContext("2d").strokeStyle = cores[pincel.indiceCor];
+  document.getElementById("screen").getContext("2d").strokeStyle = cores[indice];
 }
 
 function continuaMovimentoMouse(evento) {
