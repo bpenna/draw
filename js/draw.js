@@ -238,8 +238,8 @@ async function monitoraJogador(payload) {
       
     if (payload.new.PIN == pincel.PIN && payload.new.ID != pincel.ID) {
       pincel.adversarios[pincel.numJogadores] = {id: payload.new.ID, nome: payload.new.NOME, pontos: payload.new.PONTOS, cor: PLAYER_COLOR[pincel.numJogadores]};
-      nomes[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].nome;
-      pontos[pincel.numJogadores] = pincel.adversarios.[pincel.numJogadores].pontos;
+      nomes[pincel.numJogadores] = pincel.adversarios[pincel.numJogadores].nome;
+      pontos[pincel.numJogadores] = pincel.adversarios[pincel.numJogadores].pontos;
       cores[pincel.numJogadores] = PLAYER_COLOR[pincel.numJogadores];
       jogadores = ordena(nomes, pontos, cores);
       exibeNomes();
